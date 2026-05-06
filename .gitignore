@@ -22,6 +22,14 @@ nupkg/
 bin/
 obj/
 
+# Database files
+*.db
+*.db-wal
+*.db-shm
+*.db-shm
+
+publish/
+
 # Code Rush
 .cr/
 

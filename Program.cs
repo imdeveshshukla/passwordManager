@@ -1,12 +1,25 @@
 using Microsoft.EntityFrameworkCore;
 using StorageManagement.Data;
 using StorageManagement.Models;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // builder.Services.AddRazorPages();
+// Add services to the container.
 
+
+builder.Services.AddControllers();
+
+//var keyVaultUri = new Uri("https://hellokeyvault01.vault.azure.net/");
+
+//builder.Configuration.AddAzureKeyVault(
+//    keyVaultUri,
+//    new DefaultAzureCredential()
+//);
+
+//Console.WriteLine(config[]);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString));
@@ -41,7 +54,12 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", (IConfiguration config) =>
+{
+    var secret = config["KeyTest"];
+    return $"Secret: {secret}";
+});
+
 
 app.MapGet("/add-password", (string name, string username, string password, string accessKey, string url="", string notes="") => {
     //first check accessKey is correct or not
@@ -92,5 +110,5 @@ app.MapGet("/get-passwords", (string accessKey,string username,string name) => {
 // app.MapStaticAssets();
 // app.MapRazorPages()
 //    .WithStaticAssets();
-
+app.MapControllers();
 app.Run();
